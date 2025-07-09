@@ -1,0 +1,184 @@
+{
+  "name": "My workflow 5",
+  "nodes": [
+    {
+      "parameters": {
+        "tableId": "usuarios",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "nome",
+              "fieldValue": "={{$json.nome || \"usuário temporário\"}}"
+            },
+            {
+              "fieldId": "email",
+              "fieldValue": "={{$json.email || \"isaqueteste@teste.com\"}}"
+            },
+            {
+              "fieldId": "senha",
+              "fieldValue": "={{$json.senha || \"123456\"}}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        220,
+        0
+      ],
+      "id": "8308ec08-5a07-40e1-9744-7a7babf5b3aa",
+      "name": "Create a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "fI1iheOKMDQWxPwS",
+          "name": "Supabase account"
+        }
+      },
+      "notes": "na produção: {{$json.email}}"
+    },
+    {
+      "parameters": {
+        "jsCode": "const nome = $json.nome || \"usuário\";\nconst email = $json.email;\n\nconst assunto = `Seja bem-vindo à Crescitec, ${nome}!`;\nconst corpo = `\nOlá ${nome}!\n\nObrigado e sinta-se muito bem-vindo à Crescitec! Aqui você vai encontrar milhares de engenheiros conectados em um único só lugar. Lembre-se que, em qualquer dúvida da engenharia, pode já ter sido respondida aqui. Procure suas perguntas, debata sobre assuntos, demonstre colaboração, e receba prêmios por apoiar o projeto!\n\nQualquer dúvida, responda esse e-mail.\n\n— Time Strix 🦉\n`;\n\nreturn [\n  {\n    json: {\n      nome,\n      email,\n      assunto,\n      corpo\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        0
+      ],
+      "id": "69100a6a-8189-4d1a-b875-d69076d2205f",
+      "name": "Code",
+      "notes": "{{$json[\"email\"]}}"
+    },
+    {
+      "parameters": {
+        "fromEmail": "isaquecarvalho2007@gmail.com",
+        "toEmail": "=overwatch126564@gmail.com",
+        "subject": "={{ $json.assunto }}",
+        "emailFormat": "text",
+        "text": "={{ $json.corpo }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        620,
+        0
+      ],
+      "id": "18bc51a8-24ca-4181-bc2f-2bff61d44fb9",
+      "name": "Send email",
+      "webhookId": "cb98df9e-dfbe-44f3-9574-32dd8d348446",
+      "credentials": {
+        "smtp": {
+          "id": "19CRQyf9fA3sq6Cn",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -20,
+        0
+      ],
+      "id": "1504ff12-ccfb-44b7-9af9-bdf90427ec57",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "tableId": "log_email",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "tipo",
+              "fieldValue": " \"tipo\": \"boas_vindas\","
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "\"status\": \"enviado\","
+            },
+            {
+              "fieldId": "criado_em",
+              "fieldValue": "={{ new Date().toISOString() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        840,
+        0
+      ],
+      "id": "5b4b8269-1ebe-4d95-a24d-0a93b83f6bfa",
+      "name": "Create a row1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "fI1iheOKMDQWxPwS",
+          "name": "Supabase account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Send email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send email": {
+      "main": [
+        [
+          {
+            "node": "Create a row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f8d5135c-c2d3-494b-88e0-66597a4eea84",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "415ffac7fbce729d38af90f802b40e260723cd2b47351fd0dcacf6f575d8999a"
+  },
+  "id": "L06S4hmiaVVGp3df",
+  "tags": []
+}
